@@ -104,14 +104,14 @@ public class UserServiceImpl implements UserService {
 
 	private void validateEmail(String email) {
 
-		if (!emailValidator.validate(email)) {
+		if ((email==null)||(!emailValidator.validate(email))) {
 			throw new EmailValidationErrorException();
 		}
 	}
 
 	private void validatePassword(String password) {
 
-		if (!passwordValidator.validate(password)) {
+		if ((password==null)||(!passwordValidator.validate(password))) {
 			throw new PasswordValidationErrorException();
 		}
 	}

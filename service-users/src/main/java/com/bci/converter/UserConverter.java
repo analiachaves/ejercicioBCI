@@ -30,8 +30,7 @@ public class UserConverter {
 		dto.setCreated(entity.getCreated());
 		dto.setIsActive(entity.getIsActive());
 		dto.setLastLogin(entity.getLastLogin());
-		dto.setToken(entity.getToken());
-
+	
 		return dto;
 
 	}
@@ -47,8 +46,7 @@ public class UserConverter {
 		entity.setPhones(phones);
 		entity.setCreated(dto.getCreated());
 		entity.setLastLogin(dto.getLastLogin());
-		entity.setToken(dto.getToken());
-
+	
 		return entity;
 
 	}

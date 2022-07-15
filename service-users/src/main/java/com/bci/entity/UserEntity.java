@@ -41,7 +41,6 @@ public class UserEntity implements Serializable{
 	private LocalDateTime    created;
 	@Column(name = "last_login")
 	private LocalDateTime    lastLogin;
-	private String  token;
 	@Column(name = "is_active")
 	private Boolean isActive;
 	
@@ -50,7 +49,7 @@ public class UserEntity implements Serializable{
 		
 	
 	public UserEntity(Long id, String name, String email, String password, LocalDateTime created,
-			LocalDateTime lastLogin, String token, Boolean isActive) {
+			LocalDateTime lastLogin, Boolean isActive) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -58,8 +57,7 @@ public class UserEntity implements Serializable{
 		this.password = password;
 		this.created = created;
 		this.lastLogin = lastLogin;
-		this.token = token;
-		this.isActive = isActive;
+			this.isActive = isActive;
 	}
 
 
@@ -106,12 +104,6 @@ public class UserEntity implements Serializable{
 	}
 	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
-	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
 	}
 	public Boolean getIsActive() {
 		return isActive;

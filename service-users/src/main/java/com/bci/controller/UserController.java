@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bci.dto.LoginRequestDTO;
 import com.bci.dto.RequestDTO;
 import com.bci.dto.UserDTO;
 import com.bci.service.UserService;
@@ -28,9 +29,10 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/users/{email}")
-	public Optional<UserDTO> getUserByEmail(@PathVariable String email) {
-		return userService.getUserByEmail(email);
+	@PostMapping("/login")
+	public ResponseEntity<UserDTO> login(@RequestBody LoginRequestDTO request) {
+		final Optional<UserDTO> result = userService.login(request);
+		return new ResponseEntity<>(result.get(), HttpStatus.FOUND);
 	}
 	
 }

@@ -7,14 +7,17 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bci.converter.UserConverter;
+import com.bci.dto.LoginRequestDTO;
 import com.bci.dto.RequestDTO;
 import com.bci.dto.UserDTO;
 import com.bci.entity.UserEntity;
 import com.bci.error.EmailErrorException;
 import com.bci.error.EmailValidationErrorException;
+import com.bci.error.PasswordIncorrectErrorException;
 import com.bci.error.PasswordValidationErrorException;
 import com.bci.error.UserNotFoundException;
 import com.bci.repository.UserRepository;
@@ -53,7 +56,8 @@ public class UserServiceImpl implements UserService {
 
 		validateEmail(user.getEmail());
 		validatePassword(user.getPassword());
-
+		user.setPassword(encodePass(user.getPassword()));
+		
 		UserEntity userEntity = getNewUserEntity(user);
 
 		try {
@@ -64,54 +68,40 @@ public class UserServiceImpl implements UserService {
 			throw e;
 		}
 		logger.info("End create user");
-		return Optional.ofNullable(userConverter.userEntityToDTO(userEntity));
+		UserDTO userDTO = userConverter.userEntityToDTO(userEntity);
+		userDTO.setToken(tokenGenerator.getJWTToken(user.getEmail()));
+
+		return Optional.ofNullable(userDTO);
 
 	}
 
 	@Override
-	public Optional<List<UserDTO>> getUsers() {
-		return null; // userRepository.findAll();
-	}
-
-	@Override
-	public void deleteUser(Integer userId) {
-		userRepository.deleteById(userId);
-
-	}
-
-	@Override
-	public Optional<UserDTO> getUser(Integer userId) {
-		return null; // userRepository.findById(userId);
-	}
-
-	@Override
-	public Optional<UserDTO> getUserByEmail(String email) {
-		logger.info("Init get user by email: " + email);
-		Optional<UserEntity> userEntity = this.userRepository.findByEmail(email);
+	public Optional<UserDTO> login(LoginRequestDTO request) {
+		
+		
+		logger.info("Init get user : " + request.getUser());
+		Optional<UserEntity> userEntity = this.userRepository.findByEmail(request.getUser());
 
 		if (!userEntity.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		logger.info("End get user by email: " + email);
+		if(!validatePass(request.getPassword(), userEntity.get().getPassword())) {
+			throw new PasswordIncorrectErrorException();
+		}
+		logger.info("End get user : " + request.getUser());
 		return Optional.ofNullable(userConverter.userEntityToDTO(userEntity.get()));
-	}
-
-	@Override
-	public void updateToken(String userId, String token) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void validateEmail(String email) {
 
-		if ((email==null)||(!emailValidator.validate(email))) {
+		if ((email == null) || (!emailValidator.validate(email))) {
 			throw new EmailValidationErrorException();
 		}
 	}
 
 	private void validatePassword(String password) {
 
-		if ((password==null)||(!passwordValidator.validate(password))) {
+		if ((password == null) || (!passwordValidator.validate(password))) {
 			throw new PasswordValidationErrorException();
 		}
 	}
@@ -123,11 +113,19 @@ public class UserServiceImpl implements UserService {
 		userEntity.setLastLogin(LocalDateTime.now());
 		userEntity.setIsActive(true);
 
-		userEntity.setToken(tokenGenerator.getJWTToken(user.getEmail()));
-
 		userEntity.getPhones().forEach(phone -> phone.setPhoneUser(userEntity));
 
 		return userEntity;
+	}
+
+	private String encodePass(String userPassword) {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+		return encoder.encode(userPassword);
+	}
+	
+	private boolean validatePass(String password, String passwordEncoded) {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+		return encoder.matches(password, passwordEncoded);
 	}
 
 }

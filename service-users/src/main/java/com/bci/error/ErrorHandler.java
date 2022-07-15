@@ -38,6 +38,11 @@ public class ErrorHandler {
     	
     }
     
+    @ExceptionHandler(PasswordIncorrectErrorException.class)
+    protected ResponseEntity<ErrorDTO> handleException(PasswordIncorrectErrorException ex) {
+      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    	
+    }
     
     private ResponseEntity<ErrorDTO> getResponse(  String msg, HttpStatus status) {
     	ErrorDTO errorDTO = new ErrorDTO(LocalDateTime.now(), Integer.valueOf(status.value()) ,msg);

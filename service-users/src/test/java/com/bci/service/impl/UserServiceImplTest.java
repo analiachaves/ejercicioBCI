@@ -58,7 +58,6 @@ public class UserServiceImplTest {
 		userEntity.setId(new Long(1));
 		userEntity.setCreated(LocalDateTime.now());
 		userEntity.setLastLogin(LocalDateTime.now());
-		userEntity.setToken("token");
 		userEntity.setIsActive(true);
 			
 		requestDTO = Optional.ofNullable(new RequestDTO("Juan Ejemplo", "juan@ejemplo.cl", "Password22", listPhoneDTO));

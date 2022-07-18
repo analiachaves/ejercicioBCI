@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
 			throw new UserNotFoundException();
 		}
 		if (!validatePass(request.getPassword(), userEntity.get().getPassword())) {
-			throw new PasswordIncorrectErrorException();
+			throw new PasswordValidationErrorException();
 		}
 		logger.info("Update lastLogin");
 		updateLastLogin(userEntity.get());
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 	private void validatePassword(String password) {
 
 		if ((password == null) || (!passwordValidator.validate(password))) {
-			throw new PasswordValidationErrorException();
+			throw new PasswordIncorrectErrorException();
 		}
 	}
 

@@ -21,10 +21,10 @@ import com.bci.error.PasswordIncorrectErrorException;
 import com.bci.error.PasswordValidationErrorException;
 import com.bci.error.UserNotFoundException;
 import com.bci.repository.UserRepository;
+import com.bci.security.TokenGenerator;
 import com.bci.service.UserService;
 import com.bci.utils.EmailValidator;
 import com.bci.utils.PasswordValidator;
-import com.bci.utils.TokenGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +56,9 @@ public class UserServiceImpl implements UserService {
 
 		validateEmail(user.getEmail());
 		validatePassword(user.getPassword());
+		String oldPass = user.getPassword();
 		user.setPassword(encodePass(user.getPassword()));
-		
+
 		UserEntity userEntity = getNewUserEntity(user);
 
 		try {
@@ -67,29 +68,36 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.info("End create user");
-		UserDTO userDTO = userConverter.userEntityToDTO(userEntity);
-		userDTO.setToken(tokenGenerator.getJWTToken(user.getEmail()));
 
+		UserDTO userDTO = userConverter.userEntityToDTO(userEntity);
+		userDTO.setPassword(oldPass);
+		userDTO.setToken(tokenGenerator.getJWTToken(user.getEmail()));
+		logger.info("End create user");
 		return Optional.ofNullable(userDTO);
 
 	}
 
 	@Override
 	public Optional<UserDTO> login(LoginRequestDTO request) {
-		
-		
+
 		logger.info("Init get user : " + request.getUser());
 		Optional<UserEntity> userEntity = this.userRepository.findByEmail(request.getUser());
 
 		if (!userEntity.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		if(!validatePass(request.getPassword(), userEntity.get().getPassword())) {
+		if (!validatePass(request.getPassword(), userEntity.get().getPassword())) {
 			throw new PasswordIncorrectErrorException();
 		}
+		logger.info("Update lastLogin");
+		updateLastLogin(userEntity.get());
+		logger.info("Update token");
+		UserDTO responseUser = userConverter.userEntityToDTO(userEntity.get());
+		responseUser.setToken(tokenGenerator.getJWTToken(userEntity.get().getEmail()));
+		responseUser.setPassword(request.getPassword());
+		
 		logger.info("End get user : " + request.getUser());
-		return Optional.ofNullable(userConverter.userEntityToDTO(userEntity.get()));
+		return Optional.ofNullable(responseUser);
 	}
 
 	private void validateEmail(String email) {
@@ -122,10 +130,20 @@ public class UserServiceImpl implements UserService {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 		return encoder.encode(userPassword);
 	}
-	
+
 	private boolean validatePass(String password, String passwordEncoded) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 		return encoder.matches(password, passwordEncoded);
 	}
 
+	private void updateLastLogin(UserEntity userEntity) {
+		userEntity.setLastLogin(LocalDateTime.now());
+		try {
+			userEntity = userRepository.save(userEntity);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
+	
 }

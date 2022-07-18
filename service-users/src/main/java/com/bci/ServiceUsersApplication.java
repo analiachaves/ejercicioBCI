@@ -31,7 +31,10 @@ public class ServiceUsersApplication {
 			    .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/sign-up").permitAll()
-				.anyRequest().authenticated();
+	            .antMatchers("/h2-console/**").permitAll()
+	            .anyRequest().authenticated();
+			http.csrf().disable();
+	        http.headers().frameOptions().disable();
 		}
 	}
 	

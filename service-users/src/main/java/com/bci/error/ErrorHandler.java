@@ -13,39 +13,43 @@ import com.bci.dto.ErrorDTO;
 @ControllerAdvice
 public class ErrorHandler {
 
-    
-    @ExceptionHandler(EmailValidationErrorException.class)
-    protected ResponseEntity<ErrorDTO> handleException(EmailValidationErrorException ex) {
-      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    	
-    }
-    
-    @ExceptionHandler(EmailErrorException.class)
-    protected ResponseEntity<ErrorDTO> handleException(EmailErrorException ex) {
-      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    	
-    }
-    
-    @ExceptionHandler(PasswordValidationErrorException.class)
-    protected ResponseEntity<ErrorDTO> handleException(PasswordValidationErrorException ex) {
-      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    	
-    }
-    
-    @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<ErrorDTO> handleException(UserNotFoundException ex) {
-      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    	
-    }
-    
-    @ExceptionHandler(PasswordIncorrectErrorException.class)
-    protected ResponseEntity<ErrorDTO> handleException(PasswordIncorrectErrorException ex) {
-      	return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    	
-    }
-    
-    private ResponseEntity<ErrorDTO> getResponse(  String msg, HttpStatus status) {
-    	ErrorDTO errorDTO = new ErrorDTO(LocalDateTime.now(), Integer.valueOf(status.value()) ,msg);
-    	return new ResponseEntity<>(errorDTO, status); 
-    }
+	@ExceptionHandler(EmailValidationErrorException.class)
+	protected ResponseEntity<ErrorDTO> handleException(EmailValidationErrorException ex) {
+		return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ExceptionHandler(EmailErrorException.class)
+	protected ResponseEntity<ErrorDTO> handleException(EmailErrorException ex) {
+		return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ExceptionHandler(PasswordValidationErrorException.class)
+	protected ResponseEntity<ErrorDTO> handleException(PasswordValidationErrorException ex) {
+		return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	protected ResponseEntity<ErrorDTO> handleException(UserNotFoundException ex) {
+		return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ExceptionHandler(PasswordIncorrectErrorException.class)
+	protected ResponseEntity<ErrorDTO> handleException(PasswordIncorrectErrorException ex) {
+		return getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<ErrorDTO> handleException(Exception ex) {
+		return getResponse("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	private ResponseEntity<ErrorDTO> getResponse(String msg, HttpStatus status) {
+		ErrorDTO errorDTO = new ErrorDTO(LocalDateTime.now(), Integer.valueOf(status.value()), msg);
+		return new ResponseEntity<>(errorDTO, status);
+	}
 }

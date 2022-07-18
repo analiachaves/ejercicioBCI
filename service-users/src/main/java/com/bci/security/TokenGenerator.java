@@ -1,4 +1,4 @@
-package com.bci.utils;
+package com.bci.security;
 
 import java.util.Date;
 import java.util.List;

@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "fbe84a01-9b1a-40ab-8eab-a0eb12b72d1d",
+		"name": "BCI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "822520"
+	},
+	"item": [
+		{
+			"name": "localhost:8081/sign-up",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"name\":\"analia\",\r\n\"email\": \"analiachaves@globallogic.com\",\r\n\"password\": \"11asdfGsd\",\r\n\"phones\": [\r\n{\r\n\"number\": \"4444999\",\r\n\"cityCode\": \"4\",\r\n\"countryCode\": \"55\"\r\n}\r\n]\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8081/sign-up",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8081/login",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmFsaWFjaGF2ZXNAZ2xvYmFsbG9naWMuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY1ODA5NjkxOSwiZXhwIjoxNjU4MDk3NTE5fQ.Vw6Jsg0FNsA97H-LxrxSmqUTTqMH6nAwS8vxkLZ1-gFBhxA7UIsCJBe9LDN5Nc6p7BRx-RszDOG6Wedq8IdxwA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"user\": \"analiachaves@globallogic.com\",\r\n\"password\": \"11asdfGsd\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
